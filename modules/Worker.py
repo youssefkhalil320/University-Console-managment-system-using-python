@@ -26,7 +26,7 @@ class Worker(Student):
         return self.job_title  
 
     def description(self):
-        return f"Student Name is: {sel.name} id: {self.id} Gender is {self.gender} his salary is {self.salary}"                                                            
+        return f"Student Name is: {self.name} id: {self.id} Gender is {self.gender} his salary is {self.salary}"                                                            
 
 
 
