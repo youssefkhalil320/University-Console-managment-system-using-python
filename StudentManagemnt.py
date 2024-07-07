@@ -1,5 +1,5 @@
-from Student import  Student
-from Worker import  Worker
+from modules.Student import  Student
+from modules.Worker import  Worker
 
 OurStudents = []
 
