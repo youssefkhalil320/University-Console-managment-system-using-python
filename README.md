@@ -53,11 +53,11 @@ python app.py
 
 When you run the application, the main window will appear with options to manage students or workers. Selecting either option will give you further choices to add, find, or sort students/workers. The application uses a simple and intuitive interface to perform the required operations.
 
-![Alt text](./images/1.png)
-![Alt text](./images/2.png)
-![Alt text](./images/3.png)
-![Alt text](./images/4.png)
-![Alt text](./images/5.png)
+![Alt text](./images/1.jpeg)
+![Alt text](./images/2.jpeg)
+![Alt text](./images/3.jpeg)
+![Alt text](./images/4.jpeg)
+![Alt text](./images/5.jpeg)
 
 ## Contribution
 
