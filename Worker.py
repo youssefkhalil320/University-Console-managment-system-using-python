@@ -1,4 +1,4 @@
-from Student import Student
+from modules.Student import Student
 
 class Worker(Student):
     def __init__(self, name = "Human", id = 0000, dbirth = "20-12-2000", nat = "EG", gender = "M" , salary = 5000 ,working_hours = 9, job_title = "DR."):
