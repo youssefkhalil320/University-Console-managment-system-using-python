@@ -37,4 +37,4 @@ class Student:
         self.gender = gender      
 
     def description(self):
-        return f"Student Name is: {sel.name} id: {self.id} Gender is {self.gender}"                                  
+        return f"Student Name is: {self.name} id: {self.id} Gender is {self.gender}"                                  
