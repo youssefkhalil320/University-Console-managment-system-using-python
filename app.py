@@ -45,8 +45,8 @@ def ManageWorker():
             nat = input("Enter the worker's nationality")
             gender = input("the worker gender")
             salary = int(input("the worker salary"))
-            new_student = Student(name,sid,dbirth,nat,gender)
-            add_student(new_student)
+            new_worker = Worker(name,sid,dbirth,nat,gender,salary)
+            add_worker(new_worker)
         elif option == "2":
             option = input("Enter the worker name ")
             print(find_worker_by_name(option))
