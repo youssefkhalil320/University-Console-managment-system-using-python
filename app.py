@@ -1,5 +1,5 @@
-from StudentManagemnt import *
-from WorkerManagement import *
+from modules.StudentManagemnt import *
+from modules.WorkerManagement import *
 import sys
 
 
