@@ -1,406 +1,471 @@
-from PyQt5.QtWidgets import (QApplication, QWidget, QVBoxLayout, QLabel, QLineEdit, 
-                             QPushButton, QMessageBox, QComboBox, QHBoxLayout)
 import sys
+from PyQt5.QtWidgets import (QApplication, QWidget, QVBoxLayout, QLabel, QLineEdit, QPushButton, QMessageBox)
+from PyQt5.QtGui import QFont, QIcon
+from PyQt5.QtCore import Qt
 from modules.StudentManagemnt import *
 from modules.WorkerManagement import *
+
+# Global variables for window dimensions, positions, and font settings
+WINDOW_X = 100
+WINDOW_Y = 100
+WINDOW_WIDTH = 800
+WINDOW_HEIGHT = 600
+SUBWINDOW_WIDTH = 600
+SUBWINDOW_HEIGHT = 400
+MAIN_FONT = QFont("Arial", 14)
+TITLE_FONT = QFont("Arial", 18, QFont.Bold)
+BUTTON_FONT = QFont("Arial", 12)
 
 class UniversityManagementApp(QWidget):
     def __init__(self):
         super().__init__()
         self.initUI()
-        
+
     def initUI(self):
-        self.setGeometry(100, 100, 400, 300)
         self.setWindowTitle('University Management Application')
+        self.setGeometry(WINDOW_X, WINDOW_Y, WINDOW_WIDTH, WINDOW_HEIGHT)
         
-        layout = QVBoxLayout()
+        # Setting an icon for the application
+        self.setWindowIcon(QIcon('images/icon.jpg'))
 
-        # Welcome Label
-        self.welcome_label = QLabel("Hello, Welcome to University Management Application", self)
-        layout.addWidget(self.welcome_label)
-        
-        # ComboBox for Management Selection
-        self.combo_box = QComboBox(self)
-        self.combo_box.addItem("Select Management")
-        self.combo_box.addItem("Student Management")
-        self.combo_box.addItem("Worker Management")
-        layout.addWidget(self.combo_box)
-        
-        # Button to Manage
-        self.manage_button = QPushButton("Manage", self)
-        self.manage_button.clicked.connect(self.manage)
-        layout.addWidget(self.manage_button)
-        
-        self.setLayout(layout)
-    
-    def manage(self):
-        choice = self.combo_box.currentIndex()
-        if choice == 1:
-            self.student_window = StudentManagement(self)
-            self.student_window.show()
-            self.hide()
-        elif choice == 2:
-            self.worker_window = WorkerManagement(self)
-            self.worker_window.show()
-            self.hide()
-        else:
-            QMessageBox.warning(self, "Error", "Please select a valid option")
+        main_layout = QVBoxLayout()
 
-class StudentManagement(QWidget):
-    def __init__(self, parent):
+        title = QLabel("University Management System", self)
+        title.setFont(TITLE_FONT)
+        title.setAlignment(Qt.AlignCenter)
+        title.setStyleSheet("background-color: #F5F5DC; padding: 10px; border-radius: 5px;")
+        main_layout.addWidget(title)
+
+        btn_student = QPushButton("Manage Students", self)
+        btn_student.setFont(MAIN_FONT)
+        btn_student.clicked.connect(self.student_management)
+        btn_student.setStyleSheet("background-color: #4CAF50; color: white; padding: 10px; border-radius: 5px;")
+        main_layout.addWidget(btn_student)
+
+        btn_worker = QPushButton("Manage Workers", self)
+        btn_worker.setFont(MAIN_FONT)
+        btn_worker.clicked.connect(self.worker_management)
+        btn_worker.setStyleSheet("background-color: #2196F3; color: white; padding: 10px; border-radius: 5px;")
+        main_layout.addWidget(btn_worker)
+
+        self.setLayout(main_layout)
+
+    def student_management(self):
+        self.student_window = StudentManagementWindow()
+        self.student_window.show()
+        self.hide()
+
+    def worker_management(self):
+        self.worker_window = WorkerManagementWindow()
+        self.worker_window.show()
+        self.hide()
+
+class StudentManagementWindow(QWidget):
+    def __init__(self):
         super().__init__()
-        self.parent = parent
         self.initUI()
-        
+
     def initUI(self):
-        self.setGeometry(100, 100, 400, 300)
         self.setWindowTitle('Student Management')
-        
+        self.setGeometry(WINDOW_X, WINDOW_Y, SUBWINDOW_WIDTH, SUBWINDOW_HEIGHT)
+
         layout = QVBoxLayout()
 
-        # Options for Student Management
-        self.option_label = QLabel("Select an option:", self)
-        layout.addWidget(self.option_label)
-        
-        self.option_combo = QComboBox(self)
-        self.option_combo.addItem("Select Option")
-        self.option_combo.addItem("Add Student")
-        self.option_combo.addItem("Find Student")
-        self.option_combo.addItem("Sort Students")
-        layout.addWidget(self.option_combo)
-        
-        self.option_button = QPushButton("Select", self)
-        self.option_button.clicked.connect(self.select_option)
-        layout.addWidget(self.option_button)
-        
+        title = QLabel("Manage Students", self)
+        title.setFont(TITLE_FONT)
+        title.setAlignment(Qt.AlignCenter)
+        layout.addWidget(title)
+
+        btn_add_student = QPushButton("Add Student", self)
+        btn_add_student.setFont(BUTTON_FONT)
+        btn_add_student.clicked.connect(self.add_student_ui)
+        layout.addWidget(btn_add_student)
+
+        btn_find_student = QPushButton("Find Student", self)
+        btn_find_student.setFont(BUTTON_FONT)
+        btn_find_student.clicked.connect(self.find_student_ui)
+        layout.addWidget(btn_find_student)
+
+        btn_sort_students = QPushButton("Sort Students", self)
+        btn_sort_students.setFont(BUTTON_FONT)
+        btn_sort_students.clicked.connect(self.sort_students_ui)
+        layout.addWidget(btn_sort_students)
+
+        btn_back = QPushButton("Back", self)
+        btn_back.setFont(BUTTON_FONT)
+        btn_back.clicked.connect(self.back_to_main)
+        layout.addWidget(btn_back)
+
         self.setLayout(layout)
-    
-    def select_option(self):
-        choice = self.option_combo.currentIndex()
-        if choice == 1:
-            self.add_student_ui()
-        elif choice == 2:
-            self.find_student_ui()
-        elif choice == 3:
-            self.sort_students_ui()
-        else:
-            QMessageBox.warning(self, "Error", "Please select a valid option")
 
     def add_student_ui(self):
-        self.add_student_window = QWidget()
-        self.add_student_window.setGeometry(100, 100, 400, 300)
-        self.add_student_window.setWindowTitle('Add Student')
-
-        layout = QVBoxLayout()
-        
-        self.name_input = QLineEdit(self)
-        self.name_input.setPlaceholderText("Enter student name")
-        layout.addWidget(self.name_input)
-        
-        self.id_input = QLineEdit(self)
-        self.id_input.setPlaceholderText("Enter student ID")
-        layout.addWidget(self.id_input)
-        
-        self.dob_input = QLineEdit(self)
-        self.dob_input.setPlaceholderText("Enter student date of birth")
-        layout.addWidget(self.dob_input)
-        
-        self.nat_input = QLineEdit(self)
-        self.nat_input.setPlaceholderText("Enter student nationality")
-        layout.addWidget(self.nat_input)
-        
-        self.gender_input = QLineEdit(self)
-        self.gender_input.setPlaceholderText("Enter student gender")
-        layout.addWidget(self.gender_input)
-        
-        self.add_button = QPushButton("Add Student", self)
-        self.add_button.clicked.connect(self.add_student)
-        layout.addWidget(self.add_button)
-        
-        self.back_button = QPushButton("Back", self)
-        self.back_button.clicked.connect(self.back_to_options)
-        layout.addWidget(self.back_button)
-        
-        self.add_student_window.setLayout(layout)
+        self.add_student_window = AddStudentWindow()
         self.add_student_window.show()
         self.hide()
 
-    def add_student(self):
-        name = self.name_input.text()
-        sid = int(self.id_input.text())
-        dbirth = self.dob_input.text()
-        nat = self.nat_input.text()
-        gender = self.gender_input.text()
-        
-        new_student = Student(name, sid, dbirth, nat, gender)
-        add_student(new_student)
-        
-        QMessageBox.information(self, "Success", "Student added successfully")
-        self.back_to_options()
-    
     def find_student_ui(self):
-        self.find_student_window = QWidget()
-        self.find_student_window.setGeometry(100, 100, 400, 300)
-        self.find_student_window.setWindowTitle('Find Student')
-
-        layout = QVBoxLayout()
-
-        self.find_input = QLineEdit(self)
-        self.find_input.setPlaceholderText("Enter student name or ID")
-        layout.addWidget(self.find_input)
-        
-        self.find_button = QPushButton("Find Student", self)
-        self.find_button.clicked.connect(self.find_student)
-        layout.addWidget(self.find_button)
-        
-        self.back_button = QPushButton("Back", self)
-        self.back_button.clicked.connect(self.back_to_options)
-        layout.addWidget(self.back_button)
-        
-        self.find_student_window.setLayout(layout)
+        self.find_student_window = FindStudentWindow()
         self.find_student_window.show()
         self.hide()
 
-    def find_student(self):
-        query = self.find_input.text()
-        if query.isdigit():
-            result = find_student_by_id(int(query))
-        else:
-            result = find_student_by_name(query)
-        
-        if result:
-            QMessageBox.information(self, "Student Found", result)
-        else:
-            QMessageBox.warning(self, "Error", "Student not found")
-        self.back_to_options()
-
     def sort_students_ui(self):
-        self.sort_students_window = QWidget()
-        self.sort_students_window.setGeometry(100, 100, 400, 300)
-        self.sort_students_window.setWindowTitle('Sort Students')
-
-        layout = QVBoxLayout()
-
-        self.sort_combo = QComboBox(self)
-        self.sort_combo.addItem("Select Sort Option")
-        self.sort_combo.addItem("Sort by Name")
-        self.sort_combo.addItem("Sort by ID")
-        layout.addWidget(self.sort_combo)
-        
-        self.sort_button = QPushButton("Sort", self)
-        self.sort_button.clicked.connect(self.sort_students)
-        layout.addWidget(self.sort_button)
-        
-        self.back_button = QPushButton("Back", self)
-        self.back_button.clicked.connect(self.back_to_options)
-        layout.addWidget(self.back_button)
-        
-        self.sort_students_window.setLayout(layout)
+        self.sort_students_window = SortStudentsWindow()
         self.sort_students_window.show()
         self.hide()
 
-    def sort_students(self):
-        choice = self.sort_combo.currentIndex()
-        if choice == 1:
-            sort_student_by_name()
-            QMessageBox.information(self, "Success", "Students sorted by name")
-        elif choice == 2:
-            sort_student_by_id()
-            QMessageBox.information(self, "Success", "Students sorted by ID")
-        else:
-            QMessageBox.warning(self, "Error", "Please select a valid option")
-        self.back_to_options()
+    def back_to_main(self):
+        self.main_window = UniversityManagementApp()
+        self.main_window.show()
+        self.close()
+
+class AddStudentWindow(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.initUI()
+
+    def initUI(self):
+        self.setWindowTitle('Add Student')
+        self.setGeometry(WINDOW_X, WINDOW_Y, SUBWINDOW_WIDTH, SUBWINDOW_HEIGHT)
+
+        layout = QVBoxLayout()
+
+        self.name_input = QLineEdit(self)
+        self.name_input.setPlaceholderText("Enter student name")
+        layout.addWidget(self.name_input)
+
+        self.id_input = QLineEdit(self)
+        self.id_input.setPlaceholderText("Enter student ID")
+        layout.addWidget(self.id_input)
+
+        self.dob_input = QLineEdit(self)
+        self.dob_input.setPlaceholderText("Enter student's date of birth")
+        layout.addWidget(self.dob_input)
+
+        self.nat_input = QLineEdit(self)
+        self.nat_input.setPlaceholderText("Enter student's nationality")
+        layout.addWidget(self.nat_input)
+
+        self.gender_input = QLineEdit(self)
+        self.gender_input.setPlaceholderText("Enter student's gender")
+        layout.addWidget(self.gender_input)
+
+        add_button = QPushButton("Add Student", self)
+        add_button.setFont(BUTTON_FONT)
+        add_button.clicked.connect(self.add_student)
+        layout.addWidget(add_button)
+
+        back_button = QPushButton("Back", self)
+        back_button.setFont(BUTTON_FONT)
+        back_button.clicked.connect(self.back_to_options)
+        layout.addWidget(back_button)
+
+        self.setLayout(layout)
+
+    def add_student(self):
+        name = self.name_input.text()
+        sid = self.id_input.text()
+        dob = self.dob_input.text()
+        nat = self.nat_input.text()
+        gender = self.gender_input.text()
+        new_student = Student(name, int(sid), dob, nat, gender)
+        add_student(new_student)
+        QMessageBox.information(self, "Success", "Student added successfully!")
 
     def back_to_options(self):
-        self.show()
-        if hasattr(self, 'add_student_window'):
-            self.add_student_window.close()
-        if hasattr(self, 'find_student_window'):
-            self.find_student_window.close()
-        if hasattr(self, 'sort_students_window'):
-            self.sort_students_window.close()
+        self.main_window = StudentManagementWindow()
+        self.main_window.show()
+        self.close()
 
-class WorkerManagement(QWidget):
-    def __init__(self, parent):
+class FindStudentWindow(QWidget):
+    def __init__(self):
         super().__init__()
-        self.parent = parent
         self.initUI()
-        
+
     def initUI(self):
-        self.setGeometry(100, 100, 400, 300)
-        self.setWindowTitle('Worker Management')
-        
+        self.setWindowTitle('Find Student')
+        self.setGeometry(WINDOW_X, WINDOW_Y, SUBWINDOW_WIDTH, SUBWINDOW_HEIGHT)
+
         layout = QVBoxLayout()
 
-        # Options for Worker Management
-        self.option_label = QLabel("Select an option:", self)
-        layout.addWidget(self.option_label)
-        
-        self.option_combo = QComboBox(self)
-        self.option_combo.addItem("Select Option")
-        self.option_combo.addItem("Add Worker")
-        self.option_combo.addItem("Find Worker")
-        self.option_combo.addItem("Sort Workers")
-        layout.addWidget(self.option_combo)
-        
-        self.option_button = QPushButton("Select", self)
-        self.option_button.clicked.connect(self.select_option)
-        layout.addWidget(self.option_button)
-        
+        self.search_input = QLineEdit(self)
+        self.search_input.setPlaceholderText("Enter student name or ID")
+        layout.addWidget(self.search_input)
+
+        find_button = QPushButton("Find Student", self)
+        find_button.setFont(BUTTON_FONT)
+        find_button.clicked.connect(self.find_student)
+        layout.addWidget(find_button)
+
+        self.result_label = QLabel("", self)
+        self.result_label.setFont(BUTTON_FONT)
+        layout.addWidget(self.result_label)
+
+        back_button = QPushButton("Back", self)
+        back_button.setFont(BUTTON_FONT)
+        back_button.clicked.connect(self.back_to_options)
+        layout.addWidget(back_button)
+
         self.setLayout(layout)
-    
-    def select_option(self):
-        choice = self.option_combo.currentIndex()
-        if choice == 1:
-            self.add_worker_ui()
-        elif choice == 2:
-            self.find_worker_ui()
-        elif choice == 3:
-            self.sort_workers_ui()
+
+    def find_student(self):
+        search_term = self.search_input.text()
+        if search_term.isdigit():
+            result = find_student_by_id(int(search_term))
         else:
-            QMessageBox.warning(self, "Error", "Please select a valid option")
+            result = find_student_by_name(search_term)
+        self.result_label.setText(result if result else "Student not found")
+
+    def back_to_options(self):
+        self.main_window = StudentManagementWindow()
+        self.main_window.show()
+        self.close()
+
+class SortStudentsWindow(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.initUI()
+
+    def initUI(self):
+        self.setWindowTitle('Sort Students')
+        self.setGeometry(WINDOW_X, WINDOW_Y, SUBWINDOW_WIDTH, SUBWINDOW_HEIGHT)
+
+        layout = QVBoxLayout()
+
+        sort_name_button = QPushButton("Sort by Name", self)
+        sort_name_button.setFont(BUTTON_FONT)
+        sort_name_button.clicked.connect(self.sort_by_name)
+        layout.addWidget(sort_name_button)
+
+        sort_id_button = QPushButton("Sort by ID", self)
+        sort_id_button.setFont(BUTTON_FONT)
+        sort_id_button.clicked.connect(self.sort_by_id)
+        layout.addWidget(sort_id_button)
+
+        back_button = QPushButton("Back", self)
+        back_button.setFont(BUTTON_FONT)
+        back_button.clicked.connect(self.back_to_options)
+        layout.addWidget(back_button)
+
+        self.setLayout(layout)
+
+    def sort_by_name(self):
+        sort_student_by_name()
+        QMessageBox.information(self, "Success", "Students sorted by name!")
+
+    def sort_by_id(self):
+        sort_student_by_id()
+        QMessageBox.information(self, "Success", "Students sorted by ID!")
+
+    def back_to_options(self):
+        self.main_window = StudentManagementWindow()
+        self.main_window.show()
+        self.close()
+
+class WorkerManagementWindow(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.initUI()
+
+    def initUI(self):
+        self.setWindowTitle('Worker Management')
+        self.setGeometry(WINDOW_X, WINDOW_Y, SUBWINDOW_WIDTH, SUBWINDOW_HEIGHT)
+
+        layout = QVBoxLayout()
+
+        title = QLabel("Manage Workers", self)
+        title.setFont(TITLE_FONT)
+        title.setAlignment(Qt.AlignCenter)
+        layout.addWidget(title)
+
+        btn_add_worker = QPushButton("Add Worker", self)
+        btn_add_worker.setFont(BUTTON_FONT)
+        btn_add_worker.clicked.connect(self.add_worker_ui)
+        layout.addWidget(btn_add_worker)
+
+        btn_find_worker = QPushButton("Find Worker", self)
+        btn_find_worker.setFont(BUTTON_FONT)
+        btn_find_worker.clicked.connect(self.find_worker_ui)
+        layout.addWidget(btn_find_worker)
+
+        btn_sort_workers = QPushButton("Sort Workers", self)
+        btn_sort_workers.setFont(BUTTON_FONT)
+        btn_sort_workers.clicked.connect(self.sort_workers_ui)
+        layout.addWidget(btn_sort_workers)
+
+        btn_back = QPushButton("Back", self)
+        btn_back.setFont(BUTTON_FONT)
+        btn_back.clicked.connect(self.back_to_main)
+        layout.addWidget(btn_back)
+
+        self.setLayout(layout)
 
     def add_worker_ui(self):
-        self.add_worker_window = QWidget()
-        self.add_worker_window.setGeometry(100, 100, 400, 300)
-        self.add_worker_window.setWindowTitle('Add Worker')
-
-        layout = QVBoxLayout()
-        
-        self.name_input = QLineEdit(self)
-        self.name_input.setPlaceholderText("Enter worker name")
-        layout.addWidget(self.name_input)
-        
-        self.id_input = QLineEdit(self)
-        self.id_input.setPlaceholderText("Enter worker ID")
-        layout.addWidget(self.id_input)
-        
-        self.dob_input = QLineEdit(self)
-        self.dob_input.setPlaceholderText("Enter worker date of birth")
-        layout.addWidget(self.dob_input)
-        
-        self.nat_input = QLineEdit(self)
-        self.nat_input.setPlaceholderText("Enter worker nationality")
-        layout.addWidget(self.nat_input)
-        
-        self.gender_input = QLineEdit(self)
-        self.gender_input.setPlaceholderText("Enter worker gender")
-        layout.addWidget(self.gender_input)
-        
-        self.salary_input = QLineEdit(self)
-        self.salary_input.setPlaceholderText("Enter worker salary")
-        layout.addWidget(self.salary_input)
-        
-        self.add_button = QPushButton("Add Worker", self)
-        self.add_button.clicked.connect(self.add_worker)
-        layout.addWidget(self.add_button)
-        
-        self.back_button = QPushButton("Back", self)
-        self.back_button.clicked.connect(self.back_to_options)
-        layout.addWidget(self.back_button)
-        
-        self.add_worker_window.setLayout(layout)
+        self.add_worker_window = AddWorkerWindow()
         self.add_worker_window.show()
         self.hide()
 
-    def add_worker(self):
-        name = self.name_input.text()
-        sid = int(self.id_input.text())
-        dbirth = self.dob_input.text()
-        nat = self.nat_input.text()
-        gender = self.gender_input.text()
-        salary = int(self.salary_input.text())
-        
-        new_worker = Worker(name, sid, dbirth, nat, gender, salary)
-        add_worker(new_worker)
-        
-        QMessageBox.information(self, "Success", "Worker added successfully")
-        self.back_to_options()
-    
     def find_worker_ui(self):
-        self.find_worker_window = QWidget()
-        self.find_worker_window.setGeometry(100, 100, 400, 300)
-        self.find_worker_window.setWindowTitle('Find Worker')
-
-        layout = QVBoxLayout()
-
-        self.find_input = QLineEdit(self)
-        self.find_input.setPlaceholderText("Enter worker name or ID")
-        layout.addWidget(self.find_input)
-        
-        self.find_button = QPushButton("Find Worker", self)
-        self.find_button.clicked.connect(self.find_worker)
-        layout.addWidget(self.find_button)
-        
-        self.back_button = QPushButton("Back", self)
-        self.back_button.clicked.connect(self.back_to_options)
-        layout.addWidget(self.back_button)
-        
-        self.find_worker_window.setLayout(layout)
+        self.find_worker_window = FindWorkerWindow()
         self.find_worker_window.show()
         self.hide()
 
-    def find_worker(self):
-        query = self.find_input.text()
-        if query.isdigit():
-            result = find_worker_by_id(int(query))
-        else:
-            result = find_worker_by_name(query)
-        
-        if result:
-            QMessageBox.information(self, "Worker Found", result)
-        else:
-            QMessageBox.warning(self, "Error", "Worker not found")
-        self.back_to_options()
-
     def sort_workers_ui(self):
-        self.sort_workers_window = QWidget()
-        self.sort_workers_window.setGeometry(100, 100, 400, 300)
-        self.sort_workers_window.setWindowTitle('Sort Workers')
-
-        layout = QVBoxLayout()
-
-        self.sort_combo = QComboBox(self)
-        self.sort_combo.addItem("Select Sort Option")
-        self.sort_combo.addItem("Sort by Name")
-        self.sort_combo.addItem("Sort by ID")
-        layout.addWidget(self.sort_combo)
-        
-        self.sort_button = QPushButton("Sort", self)
-        self.sort_button.clicked.connect(self.sort_workers)
-        layout.addWidget(self.sort_button)
-        
-        self.back_button = QPushButton("Back", self)
-        self.back_button.clicked.connect(self.back_to_options)
-        layout.addWidget(self.back_button)
-        
-        self.sort_workers_window.setLayout(layout)
+        self.sort_workers_window = SortWorkersWindow()
         self.sort_workers_window.show()
         self.hide()
 
-    def sort_workers(self):
-        choice = self.sort_combo.currentIndex()
-        if choice == 1:
-            sort_worker_by_name()
-            QMessageBox.information(self, "Success", "Workers sorted by name")
-        elif choice == 2:
-            sort_worker_by_id()
-            QMessageBox.information(self, "Success", "Workers sorted by ID")
-        else:
-            QMessageBox.warning(self, "Error", "Please select a valid option")
-        self.back_to_options()
+    def back_to_main(self):
+        self.main_window = UniversityManagementApp()
+        self.main_window.show()
+        self.close()
+
+class AddWorkerWindow(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.initUI()
+
+    def initUI(self):
+        self.setWindowTitle('Add Worker')
+        self.setGeometry(WINDOW_X, WINDOW_Y, SUBWINDOW_WIDTH, SUBWINDOW_HEIGHT)
+
+        layout = QVBoxLayout()
+
+        self.name_input = QLineEdit(self)
+        self.name_input.setPlaceholderText("Enter worker name")
+        layout.addWidget(self.name_input)
+
+        self.id_input = QLineEdit(self)
+        self.id_input.setPlaceholderText("Enter worker ID")
+        layout.addWidget(self.id_input)
+
+        self.dob_input = QLineEdit(self)
+        self.dob_input.setPlaceholderText("Enter worker's date of birth")
+        layout.addWidget(self.dob_input)
+
+        self.nat_input = QLineEdit(self)
+        self.nat_input.setPlaceholderText("Enter worker's nationality")
+        layout.addWidget(self.nat_input)
+
+        self.gender_input = QLineEdit(self)
+        self.gender_input.setPlaceholderText("Enter worker's gender")
+        layout.addWidget(self.gender_input)
+
+        add_button = QPushButton("Add Worker", self)
+        add_button.setFont(BUTTON_FONT)
+        add_button.clicked.connect(self.add_worker)
+        layout.addWidget(add_button)
+
+        back_button = QPushButton("Back", self)
+        back_button.setFont(BUTTON_FONT)
+        back_button.clicked.connect(self.back_to_options)
+        layout.addWidget(back_button)
+
+        self.setLayout(layout)
+
+    def add_worker(self):
+        name = self.name_input.text()
+        wid = self.id_input.text()
+        dob = self.dob_input.text()
+        nat = self.nat_input.text()
+        gender = self.gender_input.text()
+        new_worker = Worker(name, int(wid), dob, nat, gender)
+        add_worker(new_worker)
+        QMessageBox.information(self, "Success", "Worker added successfully!")
 
     def back_to_options(self):
-        self.show()
-        if hasattr(self, 'add_worker_window'):
-            self.add_worker_window.close()
-        if hasattr(self, 'find_worker_window'):
-            self.find_worker_window.close()
-        if hasattr(self, 'sort_workers_window'):
-            self.sort_workers_window.close()
+        self.main_window = WorkerManagementWindow()
+        self.main_window.show()
+        self.close()
 
+class FindWorkerWindow(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.initUI()
+
+    def initUI(self):
+        self.setWindowTitle('Find Worker')
+        self.setGeometry(WINDOW_X, WINDOW_Y, SUBWINDOW_WIDTH, SUBWINDOW_HEIGHT)
+
+        layout = QVBoxLayout()
+
+        self.search_input = QLineEdit(self)
+        self.search_input.setPlaceholderText("Enter worker name or ID")
+        layout.addWidget(self.search_input)
+
+        find_button = QPushButton("Find Worker", self)
+        find_button.setFont(BUTTON_FONT)
+        find_button.clicked.connect(self.find_worker)
+        layout.addWidget(find_button)
+
+        self.result_label = QLabel("", self)
+        self.result_label.setFont(BUTTON_FONT)
+        layout.addWidget(self.result_label)
+
+        back_button = QPushButton("Back", self)
+        back_button.setFont(BUTTON_FONT)
+        back_button.clicked.connect(self.back_to_options)
+        layout.addWidget(back_button)
+
+        self.setLayout(layout)
+
+    def find_worker(self):
+        search_term = self.search_input.text()
+        if search_term.isdigit():
+            result = find_worker_by_id(int(search_term))
+        else:
+            result = find_worker_by_name(search_term)
+        self.result_label.setText(result if result else "Worker not found")
+
+    def back_to_options(self):
+        self.main_window = WorkerManagementWindow()
+        self.main_window.show()
+        self.close()
+
+class SortWorkersWindow(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.initUI()
+
+    def initUI(self):
+        self.setWindowTitle('Sort Workers')
+        self.setGeometry(WINDOW_X, WINDOW_Y, SUBWINDOW_WIDTH, SUBWINDOW_HEIGHT)
+
+        layout = QVBoxLayout()
+
+        sort_name_button = QPushButton("Sort by Name", self)
+        sort_name_button.setFont(BUTTON_FONT)
+        sort_name_button.clicked.connect(self.sort_by_name)
+        layout.addWidget(sort_name_button)
+
+        sort_id_button = QPushButton("Sort by ID", self)
+        sort_id_button.setFont(BUTTON_FONT)
+        sort_id_button.clicked.connect(self.sort_by_id)
+        layout.addWidget(sort_id_button)
+
+        back_button = QPushButton("Back", self)
+        back_button.setFont(BUTTON_FONT)
+        back_button.clicked.connect(self.back_to_options)
+        layout.addWidget(back_button)
+
+        self.setLayout(layout)
+
+    def sort_by_name(self):
+        sort_worker_by_name()
+        QMessageBox.information(self, "Success", "Workers sorted by name!")
+
+    def sort_by_id(self):
+        sort_worker_by_id()
+        QMessageBox.information(self, "Success", "Workers sorted by ID!")
+
+    def back_to_options(self):
+        self.main_window = WorkerManagementWindow()
+        self.main_window.show()
+        self.close()
+
+# Initialize the app
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    ex = UniversityManagementApp()
-    ex.show()
+    main_window = UniversityManagementApp()
+    main_window.show()
     sys.exit(app.exec_())
+
